@@ -5,6 +5,7 @@ There is currently no *DPCM support.
 
 The php script inputs a VGM file and the output data is intended to be written into the BANK00 segment at the end of nesvgmplay.s
 
+This is configured for the MMC3 mapper and a 256kb PRG ROM, for Sunsoft 5B audio a modified emulator with Sunsoft audio on MMC3 is needed.
 
 This depends on the CC65 toolchain, though it only uses the ca65 assembler, not the C compiler:
 
