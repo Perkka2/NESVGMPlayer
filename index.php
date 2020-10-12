@@ -171,14 +171,14 @@ while ($i < $filesize) {
 	   $datasize+=3;
 	   continue;
    }
-   else if(($unpacked[$i] == hexdec(57))|($unpacked[$i] == hexdec(56))|($unpacked[$i] == hexdec('A0'))|($unpacked[$i] == hexdec(55))|($unpacked[$i] == hexdec(58))|($unpacked[$i] == hexdec(59))|($unpacked[$i] == hexdec(51))){
+   else if(($unpacked[$i] == hexdec(57))|($unpacked[$i] == hexdec(56))|($unpacked[$i] == hexdec('A0'))|($unpacked[$i] == hexdec(55))|($unpacked[$i] == hexdec(58))|($unpacked[$i] == hexdec(59))|($unpacked[$i] == hexdec(51))|($unpacked[$i] == hexdec(53))|($unpacked[$i] == hexdec(52))){
      $address = substr(0 . dechex($unpacked[$i+1]),-2);
      $data = substr(0 . dechex($unpacked[$i+2]),-2);
      //print '&nbsp;&nbsp;&nbsp;&nbsp;LDA #$' . strtoupper($address) . '  <br />';
      fwrite($fpout,'  LDA #$' . strtoupper($address) . "\r\n");
      //print '&nbsp;&nbsp;&nbsp;&nbsp;LDY #$' . strtoupper($data) . ' <br />';
      fwrite($fpout,'  LDY #$' . strtoupper($data) . "\r\n");
-     if(($unpacked[$i] == hexdec(57))|($unpacked[$i] == hexdec(59))){
+     if(($unpacked[$i] == hexdec(57))|($unpacked[$i] == hexdec(59))|($unpacked[$i] == hexdec(53))){
        //print '&nbsp;&nbsp;&nbsp;&nbsp;jsr sendtoYM2	<br /><br />';
        fwrite($fpout,"  jsr sendtoYM2\r\n\r\n");
      }
