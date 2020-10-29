@@ -560,9 +560,6 @@ main:
 	; show the screen
 	jsr draw_cursor
 	jsr ppu_update
-	@nearby_rts       = $8059
-	@nearby_rts_14cyc = $8058  ; clc + rts
-	@nearby_rts_15cyc = $8058  ; jmp + rts
 	jsr startdelay	
 	LDA #$80
     LDY #$29
@@ -573,6 +570,7 @@ main:
 .segment "CODE"
 	; end of VGM
 	; main loop
+main_loop:
 @loop:
 	; read gamepad
 	jsr gamepad_poll
@@ -626,25 +624,20 @@ main:
 	; keep doing this forever!
 	jmp @loop
 
-	
-bankselect2:
-	lda #%00000110
-	sta $8000
-	lda #$01
-	sta $8001
-	jmp $8000
-	
+;  The delay is 9*(256*A+Y)+8 cycles (plus 12 more for JSR & RTS if you make it a subroutine)
 delayloop1:
 	lda #0
-	ldy #1
+	ldy #2
+	nop
+	nop
 	jmp delayloop
 delayloop2:
 	lda #0
-	ldy #4
+	ldy #7
 	jmp delayloop
 delayloop3:
 	lda #0
-	ldy #9
+	ldy #11
 	jmp delayloop
 delayloop4:
 	lda #0
@@ -656,7 +649,7 @@ delayloop5:
 	jmp delayloop
 delayloop6:
 	lda #0
-	ldy #26
+	ldy #25
 	jmp delayloop
 delayloop7:
 	lda #0
@@ -664,15 +657,15 @@ delayloop7:
 	jmp delayloop
 delayloop8:
 	lda #0
-	ldy #35
+	ldy #34
 	jmp delayloop
 delayloop9:
 	lda #0
-	ldy #40
+	ldy #39
 	jmp delayloop
 delayloop10:
 	lda #0
-	ldy #44
+	ldy #43
 	jmp delayloop
 delayloop11:
 	lda #0
@@ -680,7 +673,7 @@ delayloop11:
 	jmp delayloop
 delayloop12:
 	lda #0
-	ldy #53
+	ldy #52
 	jmp delayloop
 delayloop13:
 	lda #0
@@ -696,19 +689,18 @@ delayloop15:
 	jmp delayloop
 delayloop16:
 	lda #0
-	ldy #72
+	ldy #71
 	jmp delayloop
 delayloop882:
 	lda #15
-	ldy #0
+	ldy #5
 	jmp delayloop	
 delayloop735:
 	lda #13
-	ldy #0
+	ldy #2
 	jmp delayloop	
 
 startdelay:
-		lda #30
 		lda #250
 		;sta $255
 		ldy #0
@@ -722,16 +714,8 @@ delayloop:   CPY  #1
 		
 sendtoYM:
 	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	STA $C000 
-	nop
+	STA $C000 ;3 cycles
+	nop ;2 cycles
 	nop
 	nop
 	nop
@@ -753,13 +737,6 @@ sendtoYMloop:
 sendtoYM2:
 	nop
 	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
 	STA $C002 
 	nop
 	nop
@@ -778,6 +755,32 @@ sendtoYM2loop:
 	DEY
     SBC  #0
     BCS  sendtoYM2loop
+	rts		
+	
+sendtoYMLowDelay:
+	nop
+	nop
+	nop
+	STA $C000 
+	nop
+	nop
+	nop
+	STY $E000
+	nop
+	nop
+	rts
+
+sendtoYM2LowDelay:
+	nop
+	nop
+	nop
+	STA $C002 
+	nop
+	nop
+	nop
+	STY $E002
+	nop
+	nop
 	rts
 	
 push_u:
@@ -1073,3 +1076,4 @@ setup_background:
 
 .segment "BANK00"
 
+;end

@@ -179,12 +179,22 @@ while ($i < $filesize) {
      //print '&nbsp;&nbsp;&nbsp;&nbsp;LDY #$' . strtoupper($data) . ' <br />';
      fwrite($fpout,'  LDY #$' . strtoupper($data) . "\r\n");
      if(($unpacked[$i] == hexdec(57))|($unpacked[$i] == hexdec(59))|($unpacked[$i] == hexdec(53))){
+		if($address < 16){
+			fwrite($fpout,"  jsr sendtoYM2LowDelay\r\n\r\n");
+		}
        //print '&nbsp;&nbsp;&nbsp;&nbsp;jsr sendtoYM2	<br /><br />';
-       fwrite($fpout,"  jsr sendtoYM2\r\n\r\n");
+       else {
+			fwrite($fpout,"  jsr sendtoYM2\r\n\r\n");
+	   }
      }
      else{
+		if($address < 16){
+			fwrite($fpout,"  jsr sendtoYMLowDelay\r\n\r\n");
+		}
        //print '&nbsp;&nbsp;&nbsp;&nbsp;jsr sendtoYM	<br /><br />';
-       fwrite($fpout,"  jsr sendtoYM\r\n\r\n");
+       else {
+			fwrite($fpout,"  jsr sendtoYM\r\n\r\n");
+	   }
      }
 	 	 $datasize+=7;
    }
@@ -205,6 +215,7 @@ while ($i < $filesize) {
 	 }
    else if($unpacked[$i] == hexdec(66)) {
 		 //print ';end';
+     fwrite($fpout,'	jmp main_loop');
      fwrite($fpout,';end');
 		 break;
    }
