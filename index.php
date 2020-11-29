@@ -143,12 +143,20 @@ while ($i < $filesize) {
 		$datasize = 0;
 	}
    if($unpacked[$i] == hexdec(61)){
-     $delayY = (41*(hexdec(dechex($unpacked[$i+2]) . dechex($unpacked[$i+1])))-15)/9%256;
-     $delayA = floor((41*(hexdec(dechex($unpacked[$i+2]) . dechex($unpacked[$i+1])))-15)/9/256);
-	 //print ';Delay Cycles: ' . hexdec(dechex($unpacked[$i+2]) . dechex($unpacked[$i+1])) . 'samples<br/>';
-	 //print '&nbsp;&nbsp;&nbsp;&nbsp;LDY #'.$delayY.'<br/>&nbsp;&nbsp;&nbsp;&nbsp;LDA #'.$delayA.'<br />&nbsp;&nbsp;&nbsp;&nbsp;jsr delayloop<br /><br />';
-   fwrite($fpout,'  LDY #'.$delayY."\r\n  LDA #".$delayA."\r\n  jsr delayloop\r\n\r\n");
-	 $datasize+=7;
+	 $delay = hexdec(dechex($unpacked[$i+2]) . dechex($unpacked[$i+1]));
+	 while($delay > 0){
+		if($delay > 14306){
+			fwrite($fpout,"  LDY #0\r\n  LDA #255\r\n  jsr delayloop\r\n\r\n");
+			$delay = $delay - 14306;
+		}
+		else{
+			$delayY = (41*$delay-23)/9%256;
+			$delayA = floor((41*$delay-23)/9/256);
+			fwrite($fpout,'  LDY #'.$delayY."\r\n  LDA #".$delayA."\r\n  jsr delayloop\r\n\r\n");
+			$delay = 0;
+		}   
+	 $datasize+=7;}
+	 
    }
    else if($unpacked[$i] == hexdec(62)){
 	   //print '&nbsp;&nbsp;&nbsp;&nbsp;jsr delayloop735<br /><br />';
